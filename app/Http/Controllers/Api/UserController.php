@@ -27,7 +27,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        return UserResource::Collection(User::all());
+        return UserResource::Collection(User::with('roles')->get());
     }
 
     /**
@@ -116,7 +116,7 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($user)
+    public function destroy(User $user)
     {
         $user->delete();
         return response()->json([
