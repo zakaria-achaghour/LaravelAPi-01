@@ -41,7 +41,11 @@ class RoleController extends Controller
         $role = Role::create($request->all());
         // $role->name = $request->input('name');
         // $role->save();
-        return response()->json(new RoleResource($role));
+      //  return response()->json(new RoleResource($role));
+        return response()->json([
+            'message' => 'Role Added!',
+            'role' =>new RoleResource($role)
+        ]);
     }
 
     /**
@@ -64,10 +68,15 @@ class RoleController extends Controller
      */
     public function update(UpdateRoleRequest $request, Role $role)
     {
+    
 
         $role->name = $request->input('name');
         $role->save();
-        return response()->json(new RoleResource($role), 200);
+        return response()->json([
+            'message' => 'Role updated!',
+            'role' => $role
+        ]);
+      //  return response()->json(new RoleResource($role), 200);
     }
 
     /**
@@ -79,6 +88,10 @@ class RoleController extends Controller
     public function destroy(Role $role)
     {
         $role->delete();
-        return response()->json(null, 204);
+        //return response()->json(null, 204);
+        return response()->json([
+            'message' => 'Role Deleted!',
+            'role' => null
+        ]);
     }
 }

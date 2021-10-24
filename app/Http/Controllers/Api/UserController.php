@@ -8,8 +8,10 @@ use App\Http\Requests\Role\StoreRoleRequest;
 use App\Http\Requests\Role\UpdateRoleRequest;
 */
 use App\Http\Resources\UserResource;
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
@@ -41,21 +43,30 @@ class UserController extends Controller
         $validator = Validator::make($request->all(), [
             'firstname' => 'required|string|between:2,100',
             'lastname' => 'required|string|between:2,100',
-            'username' => 'string|between:2,100',
             'gender' => 'string|between:2,50',
             'email' => 'required|string|email|max:100',
-            'password' => 'required|min:6',
-            'role'=> 'string|min:3'
+            'roles'=> 'required'
         ]);
         if($validator->fails()){
             return response()->json($validator->errors(), 400);
        }
 
        
-       $user = User::create(array_merge(
-                   $validator->validated(),
-                   ['password' => bcrypt($request->password)]
-               ));
+    //    $user = User::create(array_merge(
+    //                $validator->validated(),
+    //                ['password' => bcrypt($request->password)]
+    //            ));
+    $rolesIds = Role::select('id')->whereIn('name',$request->roles)->get();
+                $user = new User();
+                $user->firstname = $request->firstname;
+                $user->lastname = $request->lastname;
+                $user->email = $request->email;
+                $user->gender = $request->gender;
+                $user->username = $request->input('firstname')[0] . '.' . $request->input('lastname');
+                $user->password = Hash::make('password');
+                $user->save();
+                
+                $user->roles()->sync($rolesIds);
 
        return response()->json([
            'message' => 'User successfully Created',
@@ -70,9 +81,11 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(User $user)
+    public function show($id)
     {
-        return $user;
+        // return new UserResource(User::findOrFail($id));
+        $user = User::with('roles')->where('id',$id)->first();
+        return new UserResource($user);
     }
 
     /**
@@ -87,26 +100,24 @@ class UserController extends Controller
         $validator = Validator::make($request->all(), [
             'firstname' => 'required|string|between:2,100',
             'lastname' => 'required|string|between:2,100',
-            'username' => 'string|between:2,100',
             'gender' => 'string|between:2,50',
             'email' => 'required|string|email|max:100',
-            'password' => 'required|min:6',
-            'role'=> 'string|min:3'
+            'roles'=> 'required'
         ]);
       
         $user->firstname = $request->firstname;
         $user->lastname = $request->lastname;
-        $user->username = $request->username;
         $user->email = $request->email;
         $user->gender = $request->gender;
-        $user->contact = $request->contact;
-        $user->role = $request->role;
+        $user->username = $request->input('firstname')[0] . '.' . $request->input('lastname');
         $user->save();
-
+        $rolesIds = Role::select('id')->whereIn('name',$request->roles)->get();
+        $user->roles()->sync($rolesIds);
+        
         return response()->json([
-            'message' => 'user updated!',
+            'message' => 'User successfully Updated',
             'user' => $user
-        ]);
+        ], 201);
 
     }
 

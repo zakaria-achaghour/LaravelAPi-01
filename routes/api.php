@@ -32,9 +32,11 @@ Route::group([
     Route::post('refresh', 'AuthController@refresh');
     Route::post('me', 'AuthController@me');
 });
-
+    Route::apiResource('cities','CityController');
+    Route::apiResource('regions','RegionController');
     Route::apiResource('roles','RoleController');
     Route::apiResource('users','UserController');
+
 
 
 
