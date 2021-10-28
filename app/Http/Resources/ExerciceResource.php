@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class UserRoleResource extends JsonResource
+class ExerciceResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -13,9 +13,11 @@ class UserRoleResource extends JsonResource
      * @return array|\Illuminate\Contracts\Support\Arrayable|\JsonSerializable
      */
     public function toArray($request)
-    {
-        return join(' , ',[
-            'name' => $this->name,
-         ]);
+    { 
+                return [
+                'id' => $this->id ,
+                'year' => $this->year,
+                'statut' => $this->statut,
+            ];
     }
 }

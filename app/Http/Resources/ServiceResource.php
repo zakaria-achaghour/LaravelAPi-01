@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class UserRoleResource extends JsonResource
+class ServiceResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -14,8 +14,13 @@ class UserRoleResource extends JsonResource
      */
     public function toArray($request)
     {
-        return join(' , ',[
+        return [
+            'id' => $this->id ,
             'name' => $this->name,
-         ]);
+            'father' => $this->father,
+            'statut' => $this->statut,
+            // 'created_at' =>Carbon::parse(  $this->created_at )->format('d/m/Y')
+             'created_at' =>$this->created_at 
+        ];
     }
 }
