@@ -20,7 +20,7 @@ class FamilleResource extends JsonResource
             'lot_fournisseur' => $this->lot_fournisseur,
             'date_peremption' => $this->date_peremption,
             'inventaire' => $this->inventaire,
-            'service' => (FamilleServiceResource::collection($this->whenLoaded('service'))),
+            'service' => ( new FamilleServiceResource($this->whenLoaded('service'))),
             // 'created_at' =>Carbon::parse(  $this->created_at )->format('d/m/Y')
              'created_at' =>$this->created_at 
         ];

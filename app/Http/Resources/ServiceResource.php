@@ -17,8 +17,10 @@ class ServiceResource extends JsonResource
         return [
             'id' => $this->id ,
             'name' => $this->name,
+            'familles'=> (ServiceFamillesResource::collection($this->whenLoaded('services'))),
             'father' => $this->father,
             'statut' => $this->statut,
+
             // 'created_at' =>Carbon::parse(  $this->created_at )->format('d/m/Y')
              'created_at' =>$this->created_at 
         ];

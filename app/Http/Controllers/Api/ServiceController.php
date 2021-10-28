@@ -21,7 +21,7 @@ class ServiceController extends Controller
      */
     public function index()
     {
-        return ServiceResource::Collection(Service::all());
+        return ServiceResource::Collection(Service::with('familles')->get());
         
     }
 
