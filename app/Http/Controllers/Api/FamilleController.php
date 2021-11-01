@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\FamilleResource;
 use App\Models\Famille;
+use App\Models\Service;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -21,7 +22,7 @@ class FamilleController extends Controller
      */
     public function index()
     {
-        return FamilleResource::Collection(Famille::with('service')->get()());
+        return FamilleResource::Collection(Famille::with('service')->get());
         
     }
 
@@ -37,7 +38,9 @@ class FamilleController extends Controller
             'name' => 'required|string', 
             'service_id' => 'required', 
             'lot_fournisseur' => 'required', 
-            'date_peremption' => 'required', 
+            'date_peremption' => 'required',
+            'statut' => 'required', 
+
 
 
         ]);
@@ -45,8 +48,20 @@ class FamilleController extends Controller
         if($validator->fails()){
             return response()->json(['error'=>$validator->errors()], 400);
        }
-        $famille = Famille::create($request->all());
-     
+       // $famille = Famille::create($request->all());
+    //$service_id = Service::select('id')->where('name',$request->service)->value();
+
+     $famille = new Famille();
+     $famille->name = $request->name;
+
+     $famille->service_id =  $request->service_id;
+     $famille->lot_fournisseur = $request->lot_fournisseur;
+     $famille->date_peremption = $request->date_peremption;
+
+     $famille->statut = $request->statut;
+     $famille->save();
+     $famille = Famille::where('id',$famille->id)->with('service')->first();
+
         return response()->json([
             'message' => 'Famille Created!',
             'famille' =>new FamilleResource($famille)
@@ -59,8 +74,9 @@ class FamilleController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Famille $famille)
+    public function show( $famille)
     {
+        $famille = Famille::where('id',$famille)->with('service')->first();
         return new FamilleResource($famille);
         
     }
@@ -95,6 +111,7 @@ class FamilleController extends Controller
 
         $famille->statut = $request->statut;
         $famille->save();
+        $famille = Famille::where('id',$famille->id)->with('service')->first();
 
        return response()->json([
            'message' => 'Famille updated!',

@@ -3,12 +3,12 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\FournisseurResource;
-use App\Models\Fournisseur;
+use App\Http\Resources\UnityResource;
+use App\Models\Unity;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
-class FournisseurController extends Controller
+class UnityController extends Controller
 {
     public function __construct()
     {
@@ -21,7 +21,8 @@ class FournisseurController extends Controller
      */
     public function index()
     {
-        return FournisseurResource::Collection(Fournisseur::all());
+       return UnityResource::Collection(Unity::all());
+        
     }
 
     /**
@@ -34,19 +35,16 @@ class FournisseurController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required|string', 
-            'statut' => 'required', 
-
-
         ]);
 
         if($validator->fails()){
             return response()->json(['error'=>$validator->errors()], 400);
        }
-        $fournisseur = Fournisseur::create($request->all());
+        $unity = Unity::create($request->all());
      
         return response()->json([
-            'message' => 'Fournisseur Created!',
-            'fournisseur' =>new FournisseurResource($fournisseur)
+            'message' => 'unity Created!',
+            'unity' =>new UnityResource($unity)
         ]);
     }
 
@@ -56,9 +54,9 @@ class FournisseurController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Fournisseur $fournisseur)
+    public function show(Unity $unity)
     {
-        return new FournisseurResource($fournisseur);
+        return new UnityResource($unity);
     }
 
     /**
@@ -68,31 +66,23 @@ class FournisseurController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request,Fournisseur $fournisseur)
+    public function update(Request $request, $id)
     {
+        
         $validator = Validator::make($request->all(), [
             'name' => 'required|string', 
-            'sage' => 'required|string', 
-            'statut' => 'required', 
-            'motif' => 'required_if:bloquer,==,0' 
-
-            
-
-
         ]);
 
         if($validator->fails()){
             return response()->json(['error'=>$validator->errors()], 400);
        }
-       $fournisseur->sage = $request->sage;
-       $fournisseur->motif = $request->motif;
-       $fournisseur->statut = $request->statut;
-       $fournisseur->name = $request->name;
-       $fournisseur->save();
-       return response()->json([
-           'message' => 'Fournisseur updated!',
-           'fournisseur' => $fournisseur
-       ]);
+       $unity = Unity::where('id', $id)->update(['name' => $request->name]);
+    
+      
+        return response()->json([
+            'message' => 'unity Updated!',
+            'unity' =>new UnityResource($unity)
+        ]);
     }
 
     /**
@@ -101,13 +91,13 @@ class FournisseurController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Fournisseur $fournisseur)
+    public function destroy(Unity $unity)
     {
-        $fournisseur->delete();
+        $unity->delete();
         //return response()->json(null, 204);
         return response()->json([
-            'message' => 'Fournisseur Deleted!',
-            'fournisseur' => null
+            'message' => 'unity Deleted!',
+            'unity' => null
         ]);
     }
 }

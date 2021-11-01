@@ -13,11 +13,16 @@ class Famille extends Model
         'name',
         'service_id',
         'lot_fournisseur',
-        'date_peremption'
+        'date_peremption',
+        'statut'
     ];
 
     public function service()
     {
         return $this->belongsTo(Service::class);
+    }
+    public function products()
+    {
+        return $this->hasMany(Product::class);
     }
 }

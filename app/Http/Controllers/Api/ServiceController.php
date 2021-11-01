@@ -21,7 +21,8 @@ class ServiceController extends Controller
      */
     public function index()
     {
-        return ServiceResource::Collection(Service::with('familles')->get());
+       // return ServiceResource::Collection(Service::with('familles')->orderByDesc('id')->get());
+       return ServiceResource::Collection(Service::with('familles')->get());
         
     }
 
@@ -34,8 +35,9 @@ class ServiceController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string', 
-            'father' => 'required', 
+            'name' => 'required|string',
+            'statut' => 'required', 
+            'father' => 'required'
 
         ]);
 

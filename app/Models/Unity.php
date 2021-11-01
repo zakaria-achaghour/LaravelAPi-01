@@ -6,18 +6,18 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Service extends Model
+class Unity extends Model
 {
     use HasFactory,SoftDeletes;
-    protected $fillable = [        
-        'name',
-        'statut',
-        'father'
+
+
+    protected $fillable = [
+        'name'
     ];
 
-    
-    public function familles()
+
+    public function products()
     {
-        return $this->hasMany(Famille::class);
+        return $this->hasMany(Product::class);
     }
 }

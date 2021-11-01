@@ -11,6 +11,8 @@ class Fournisseur extends Model
     use HasFactory,SoftDeletes;
     protected $fillable = [
         'sage',
-        'name'
+        'name',
+        'statut',
+        'motif'
     ];
 }

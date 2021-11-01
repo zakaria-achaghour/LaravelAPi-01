@@ -36,7 +36,14 @@ Route::group([
     Route::apiResource('roles','RoleController');
     Route::apiResource('cities','CityController');
     Route::apiResource('regions','RegionController');
-    Route::apiResource('fournisseurs','FournisseursController');
+    Route::apiResource('exercices','ExerciceController');
+    Route::apiResource('fournisseurs','FournisseurController');
+    Route::apiResource('familles','FamilleController');
+    Route::apiResource('services','ServiceController');
+    Route::apiResource('products','ProductController');
+    Route::apiResource('unities','UnityController');
+
+
    
 
 
