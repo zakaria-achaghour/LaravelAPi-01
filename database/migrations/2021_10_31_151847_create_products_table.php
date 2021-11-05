@@ -20,7 +20,7 @@ class CreateProductsTable extends Migration
             $table->integer('max')->nullable();
             $table->string('sage')->nullable();
             $table->foreignId('famille_id');
-            $table->foreignId('unite_id');
+            $table->foreignId('unity_id');
             $table->boolean('lot_fournisseur')->default(0);
             $table->boolean('date_peremption')->default(0);
             $table->decimal('prix_moyen',8,3)->nullable();

@@ -3,12 +3,12 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\UnityResource;
-use App\Models\Unity;
+use App\Http\Resources\CurrencyResource;
+use App\Models\Currency;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
-class UnityController extends Controller
+class CurrencyController extends Controller
 {
     public function __construct()
     {
@@ -21,7 +21,7 @@ class UnityController extends Controller
      */
     public function index()
     {
-       return UnityResource::Collection(Unity::all());
+        return CurrencyResource::Collection(Currency::all());
         
     }
 
@@ -36,15 +36,16 @@ class UnityController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|string', 
         ]);
-
+        
         if($validator->fails()){
-            return response()->json(['error'=>$validator->errors()], 400);
+            return response()->json($validator->errors(), 400);
        }
-        $unity = Unity::create($request->all());
-     
+       $currency = new Currency();
+        $currency->name = $request->name;
+        $currency->save();
         return response()->json([
-            'message' => 'unity Created!',
-            'unity' =>new UnityResource($unity)
+            'message' => 'currency Created!',
+            'currency' => $currency
         ]);
     }
 
@@ -54,9 +55,10 @@ class UnityController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Unity $unity)
+    public function show(Currency $currency)
     {
-        return new UnityResource($unity);
+        return new CurrencyResource($currency);
+        
     }
 
     /**
@@ -66,23 +68,20 @@ class UnityController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request,Currency $currency)
     {
-        
         $validator = Validator::make($request->all(), [
             'name' => 'required|string', 
         ]);
-
+        
         if($validator->fails()){
-            return response()->json(['error'=>$validator->errors()], 400);
+            return response()->json($validator->errors(), 400);
        }
-        Unity::where('id', $id)->update(['name' => $request->name]);
-       $unity = Unity::where('id', $id)->first();
-    
-      
+        $currency->name = $request->name;
+        $currency->save();
         return response()->json([
-            'message' => 'unity Updated!',
-            'unity' =>new UnityResource($unity)
+            'message' => 'currency updated!',
+            'currency' => $currency
         ]);
     }
 
@@ -92,13 +91,13 @@ class UnityController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Unity $unity)
+    public function destroy(Currency $currency)
     {
-        $unity->delete();
+        $currency->delete();
         //return response()->json(null, 204);
         return response()->json([
-            'message' => 'unity Deleted!',
-            'unity' => null
+            'message' => 'currency Deleted!',
+            'currency' => null
         ]);
     }
 }

@@ -56,7 +56,7 @@ class UserController extends Controller
     //                $validator->validated(),
     //                ['password' => bcrypt($request->password)]
     //            ));
-    $rolesIds = Role::select('id')->whereIn('name',$request->roles)->get();
+    // $rolesIds = Role::select('id')->whereIn('name',$request->roles)->get();
                 $user = new User();
                 $user->firstname = $request->firstname;
                 $user->lastname = $request->lastname;
@@ -66,11 +66,12 @@ class UserController extends Controller
                 $user->password = Hash::make('password');
                 $user->save();
                 
-                $user->roles()->sync($rolesIds);
+                $user->roles()->sync($request->roles);
+                $user = User::where('id', $user->id)->with('roles')->first();
 
        return response()->json([
            'message' => 'User successfully Created',
-           'user' => $user
+           'user' => new UserResource($user)
        ], 201);
 
     }
@@ -111,12 +112,13 @@ class UserController extends Controller
         $user->gender = $request->gender;
         $user->username = $request->input('firstname')[0] . '.' . $request->input('lastname');
         $user->save();
-        $rolesIds = Role::select('id')->whereIn('name',$request->roles)->get();
-        $user->roles()->sync($rolesIds);
-        
+        //$rolesIds = Role::select('id')->whereIn('name',$request->roles)->get();
+        $user->roles()->sync($request->roles);
+        $user = User::where('id', $user->id)->with('roles')->first();
+
         return response()->json([
             'message' => 'User successfully Updated',
-            'user' => $user
+            'user' => new UserResource($user)
         ], 201);
 
     }

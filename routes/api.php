@@ -42,6 +42,8 @@ Route::group([
     Route::apiResource('services','ServiceController');
     Route::apiResource('products','ProductController');
     Route::apiResource('unities','UnityController');
+    Route::apiResource('currencies','CurrencyController');
+
 
 
    

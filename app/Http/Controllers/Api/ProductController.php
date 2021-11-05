@@ -22,7 +22,7 @@ class ProductController extends Controller
      */
     public function index()
     {
-        return ProductResource::Collection(Product::with(['product','fournisseurs','unity'])->get());
+        return ProductResource::Collection(Product::with(['fournisseurs','unity','famille'])->get());
 
     }
 
@@ -50,10 +50,16 @@ class ProductController extends Controller
        }
        // $product = product::create($request->all());
     //$service_id = Service::select('id')->where('name',$request->service)->value();
-    $fournisseursIds = Fournisseur::select('id')->whereIn('name',$request->fournisseurs)->get();
+    //$fournisseursIds = Fournisseur::select('id')->whereIn('name',$request->fournisseurs)->get();
 
      $product = new Product();
      $product->name = $request->name;
+     $product->sage = $request->sage;
+     $product->min = $request->min;
+     $product->max = $request->max;
+     $product->prix_moyen = $request->prix;
+
+
      $product->famille_id = $request->famille;
      $product->unity_id = $request->unity;
 
@@ -61,9 +67,9 @@ class ProductController extends Controller
      $product->date_peremption = $request->date_peremption;
      $product->statut = $request->statut;
      $product->save();
-     $product->fournisseurs()->sync($fournisseursIds);
+     $product->fournisseurs()->sync($request->fournisseurs);
 
-     $product = Product::where('id',$product->id)->with(['product','fournisseurs','unity'])->first();
+      $product = Product::where('id',$product->id)->with(['fournisseurs','unity','famille'])->first();
 
         return response()->json([
             'message' => 'product Created!',
@@ -79,7 +85,7 @@ class ProductController extends Controller
      */
     public function show($id)
     {
-     $product = Product::where('id',$id)->with(['product','fournisseurs','unity'])->first();
+     $product = Product::where('id',$id)->with(['famille','fournisseurs','unity'])->first();
         return new productResource($product);
     }
 
@@ -107,21 +113,24 @@ class ProductController extends Controller
             return response()->json(['error'=>$validator->errors()], 400);
        }
 
-       $fournisseursIds = Fournisseur::select('id')->whereIn('name',$request->fournisseurs)->get();
-
-       $product = new Product();
        $product->name = $request->name;
-       $product->famille_id = $request->famille;
-       $product->unity_id = $request->unity;
-  
-       $product->lot_fournisseur = $request->lot_fournisseur;
-       $product->date_peremption = $request->date_peremption;
-       $product->statut = $request->statut;
-       $product->save();
-       $product->fournisseurs()->sync($fournisseursIds);
-  
-       $product = Product::where('id',$product->id)->with(['product','fournisseurs','unity'])->first();
-  
+        $product->sage = $request->sage;
+        $product->min = $request->min;
+        $product->max = $request->max;
+        $product->prix_moyen = $request->prix;
+
+
+        $product->famille_id = $request->famille;
+        $product->unity_id = $request->unity;
+
+        $product->lot_fournisseur = $request->lot_fournisseur;
+        $product->date_peremption = $request->date_peremption;
+        $product->statut = $request->statut;
+        $product->save();
+        $product->fournisseurs()->sync($request->fournisseurs);
+
+        $product = Product::where('id',$product->id)->with(['fournisseurs','unity','famille'])->first();
+
           return response()->json([
               'message' => 'product Updated!',
               'product' =>new productResource($product)

@@ -22,8 +22,10 @@ class ProductResource extends JsonResource
             'date_peremption' => $this->date_peremption,
             'famille' => ( new ProductFamilleResource($this->whenLoaded('famille'))),
             'unity' => ( new UnityResource($this->whenLoaded('unity'))),
-            'fournisseurs' => ( new ProductFourniseursResource($this->whenLoaded('fournisseurs'))),
-            'prix_moyen' => $this->prix_moyen,
+            'fournisseurs' => (ProductFourniseursResource::collection($this->whenLoaded('fournisseurs'))),
+            'prix' => $this->prix_moyen,
+            'max' => $this->max,
+            'min' => $this->min,
             'statut' => $this->statut,
              'created_at' =>Carbon::parse($this->created_at )->format('d/m/Y')
             

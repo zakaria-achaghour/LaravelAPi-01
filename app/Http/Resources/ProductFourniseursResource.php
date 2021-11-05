@@ -14,8 +14,13 @@ class ProductFourniseursResource extends JsonResource
      */
     public function toArray($request)
     {
-        return join(' , ',[
-            'name' => $this->name,
-         ]);
+        // return join(' , ',[
+        //     'label' => $this->name,
+        //  ]);
+        return [
+            
+            'value' => $this->id,
+            'label' => $this->name
+        ];
     }
 }

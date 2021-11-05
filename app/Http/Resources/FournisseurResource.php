@@ -19,6 +19,7 @@ class FournisseurResource extends JsonResource
             'id' => $this->id ,
             'sage' =>  $this->When($this->sage!="",$this->sage,""),
             'name' => $this->name,
+            'products' => (FournisseurProductResource::collection($this->whenLoaded('products'))),
             'statut' => $this->statut,
             'motif' => $this->When($this->motif!="",$this->motif,""),
              'created_at' =>Carbon::parse(  $this->created_at )->format('d/m/Y')

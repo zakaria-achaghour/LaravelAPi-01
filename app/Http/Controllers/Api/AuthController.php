@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\UserStorageResource;
 
 class AuthController extends Controller
 {
@@ -34,7 +35,8 @@ class AuthController extends Controller
         }
 
        // return $this->respondWithToken($token);
-       return response()->json(['access_token'=>$token,'user'=>Auth::user()]);
+       $user = User::with('roles')->where('id',Auth::id())->first();
+       return response()->json(['access_token'=>$token,'user'=>new UserStorageResource($user) ]);
     }
 
      /**

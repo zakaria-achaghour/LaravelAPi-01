@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateProductFournisseurTable extends Migration
+class CreateCurrenciesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,11 @@ class CreateProductFournisseurTable extends Migration
      */
     public function up()
     {
-        Schema::create('product_fournisseur', function (Blueprint $table) {
+        Schema::create('currencies', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('fournisseur_id')->nullable()->constrained()->onDelete('cascade');
-            $table->foreignId('product_id')->nullable()->constrained()->onDelete('cascade');
-            
+            $table->string('name');
+            $table->softDeletes();
+            $table->timestamps();
         });
     }
 
@@ -28,6 +28,6 @@ class CreateProductFournisseurTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('product_fournisseur');
+        Schema::dropIfExists('currencies');
     }
 }

@@ -23,9 +23,9 @@ class Product extends Model
         'motif'
     ];
 
-    public function unite()
+    public function unity()
     {
-        return $this->belongsTo(Unite::class);
+        return $this->belongsTo(Unity::class);
     }
     public function famille()
     {

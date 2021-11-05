@@ -21,7 +21,7 @@ class FournisseurController extends Controller
      */
     public function index()
     {
-        return FournisseurResource::Collection(Fournisseur::all());
+        return FournisseurResource::Collection(Fournisseur::with('products')->get());
     }
 
     /**
@@ -35,6 +35,7 @@ class FournisseurController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|string', 
             'statut' => 'required', 
+            'products' =>'required'
 
 
         ]);
@@ -43,7 +44,10 @@ class FournisseurController extends Controller
             return response()->json(['error'=>$validator->errors()], 400);
        }
         $fournisseur = Fournisseur::create($request->all());
+        $fournisseur->products()->sync($request->products);
+        $fournisseur = Fournisseur::where('id',$fournisseur->id)->with(['products'])->first();
      
+
         return response()->json([
             'message' => 'Fournisseur Created!',
             'fournisseur' =>new FournisseurResource($fournisseur)
@@ -56,8 +60,10 @@ class FournisseurController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Fournisseur $fournisseur)
+    public function show($id)
     {
+        $fournisseur = Fournisseur::where('id',$id)->with(['products'])->first();
+
         return new FournisseurResource($fournisseur);
     }
 
@@ -73,6 +79,7 @@ class FournisseurController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|string', 
             'sage' => 'required|string', 
+            'products' =>'required',
             'statut' => 'required', 
             'motif' => 'required_if:bloquer,==,0' 
 
@@ -89,9 +96,12 @@ class FournisseurController extends Controller
        $fournisseur->statut = $request->statut;
        $fournisseur->name = $request->name;
        $fournisseur->save();
+       $fournisseur->products()->sync($request->products);
+       $fournisseur = Fournisseur::where('id',$fournisseur->id)->with(['products'])->first();
+    
        return response()->json([
            'message' => 'Fournisseur updated!',
-           'fournisseur' => $fournisseur
+           'fournisseur' => new FournisseurResource($fournisseur)
        ]);
     }
 
