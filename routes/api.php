@@ -32,6 +32,8 @@ Route::group([
     Route::post('refresh', 'AuthController@refresh');
     Route::post('me', 'AuthController@me');
 });
+
+// configuration rutes
     Route::apiResource('users','UserController');
     Route::apiResource('roles','RoleController');
     Route::apiResource('cities','CityController');
@@ -43,6 +45,11 @@ Route::group([
     Route::apiResource('products','ProductController');
     Route::apiResource('unities','UnityController');
     Route::apiResource('currencies','CurrencyController');
+
+    // entry routes
+    Route::apiResource('entries','EntryController');
+
+
 
 
 
