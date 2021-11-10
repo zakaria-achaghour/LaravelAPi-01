@@ -4,12 +4,23 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Exercice;
+use App\Repositories\EntryRepository;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class EntryController extends Controller
 {
+    private $entryRepository;
+    public function __construct(EntryRepository $entryRepository)
+    {
+        $this->middleware('auth:api');
+        $this->entryRepository = $entryRepository;
+    }
+
+    public function findByProduct($id){
+        $this->entryRepository->findByProduct($id);
+    }
     /**
      * Display a listing of the resource.
      *
@@ -17,7 +28,8 @@ class EntryController extends Controller
      */
     public function index()
     {
-        //
+       ///return EntrResource::Collection(Famille::with('service')->get());
+        
     }
 
     /**
