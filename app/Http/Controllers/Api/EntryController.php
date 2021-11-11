@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\EntryResource;
+use App\Models\Entry;
 use App\Models\Exercice;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -43,10 +45,10 @@ class EntryController extends Controller
             'lot_fournisseur' => 'required', 
             'bon_commande' => 'required', 
             'product' => 'required', 
-            'devis' => 'required', 
+            'currency' => 'required', 
             'user' => 'required', 
             'fournisseur' => 'required', 
-            'unite' => 'required', 
+            'unity' => 'required', 
             'cofe' => 'required' 
          ]);
 
@@ -54,7 +56,12 @@ class EntryController extends Controller
             return response()->json(['error'=>$validator->errors()], 400);
        } 
 
-       
+       $entry = Entry::create($request->all());
+     
+       return response()->json([
+           'message' => 'Entry Created!',
+           'entry' =>new EntryResource($entry)
+       ]);
 
         // $entree = new Entree();
         // $entree->qte = $request->input('qte');
