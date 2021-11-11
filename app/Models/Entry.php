@@ -11,6 +11,11 @@ class Entry extends Model
     use HasFactory,SoftDeletes;
 
 
+    protected $fillable = [
+            'qte','prix_unitaire','taux_change','date_peremption','date_reception','lot_fournisseur',
+            'bon_commande','product_id','currency_id','user_id','fournisseur_id','unity_id','cofe'
+        ];
+  
 
     public function user()
     {

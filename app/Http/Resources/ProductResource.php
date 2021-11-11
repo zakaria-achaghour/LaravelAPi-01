@@ -18,6 +18,7 @@ class ProductResource extends JsonResource
         return [
             'id' => $this->id ,
             'name' => $this->name,
+            'sage' => $this->sage,
             'lot_fournisseur' => $this->lot_fournisseur,
             'date_peremption' => $this->date_peremption,
             'famille' => ( new ProductFamilleResource($this->whenLoaded('famille'))),
