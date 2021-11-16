@@ -24,6 +24,8 @@ class ProductResource extends JsonResource
             'famille' => ( new ProductFamilleResource($this->whenLoaded('famille'))),
             'unity' => ( new UnityResource($this->whenLoaded('unity'))),
             'fournisseurs' => (ProductFourniseursResource::collection($this->whenLoaded('fournisseurs'))),
+            'entries' => (EntryResource::collection($this->whenLoaded('entries'))),
+
             'prix' => $this->prix_moyen,
             'max' => $this->max,
             'min' => $this->min,

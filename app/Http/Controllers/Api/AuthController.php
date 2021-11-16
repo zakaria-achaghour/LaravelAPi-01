@@ -36,7 +36,7 @@ class AuthController extends Controller
 
        // return $this->respondWithToken($token);
        $user = User::with('roles')->where('id',Auth::id())->first();
-       return response()->json(['access_token'=>$token,'user'=>new UserStorageResource($user) ]);
+       return response()->json(['access_token'=>$token,'user'=>new UserStorageResource($user)]);
     }
 
      /**

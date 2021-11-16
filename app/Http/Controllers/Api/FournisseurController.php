@@ -21,7 +21,7 @@ class FournisseurController extends Controller
      */
     public function index()
     {
-        return FournisseurResource::Collection(Fournisseur::with('products')->get());
+        return FournisseurResource::Collection(Fournisseur::with(['products'])->get());
     }
 
     /**

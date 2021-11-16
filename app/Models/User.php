@@ -91,4 +91,8 @@ class User extends Authenticatable implements JWTSubject
     public function roles(){
         return $this->belongsToMany(Role::class)->withTimestamps();
     }
+    public function familles()
+    {
+        return $this->belongsToMany(Famille::class)->withTimestamps();
+    }
 }

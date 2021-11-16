@@ -20,4 +20,8 @@ class Fournisseur extends Model
     {
       return $this->belongsToMany(Product::class);
     }
+    public function entries()
+    {
+      return $this->belongsToMany(Entry::class);
+    }
 }

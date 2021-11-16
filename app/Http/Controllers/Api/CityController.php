@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\City\StoreCityRequest;
 use App\Http\Requests\City\UpdateCityRequest;
+use App\Http\Resources\CitiesResource;
 use App\Http\Resources\CityResource;
 use App\Models\City;
 use Illuminate\Http\Request;
@@ -23,7 +24,7 @@ class CityController extends Controller
      */
     public function index()
     {
-        return CityResource::Collection(City::all());
+        return CitiesResource::Collection(City::all());
         
     }
 
@@ -46,7 +47,7 @@ class CityController extends Controller
      
         return response()->json([
             'message' => 'City Created!',
-            'city' =>new CityResource($city)
+            'city' =>new CitiesResource($city)
         ]);
     }
 
@@ -58,7 +59,7 @@ class CityController extends Controller
      */
     public function show(City $city)
     {
-        return new CityResource($city);
+        return new CitiesResource($city);
     }
 
     /**

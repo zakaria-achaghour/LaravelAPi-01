@@ -6,14 +6,22 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\ProductResource;
 use App\Models\Fournisseur;
 use App\Models\Product;
+use App\Repositories\FamilleRepository;
+use App\Repositories\ProductRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class ProductController extends Controller
 {
-    public function __construct()
+    
+    private $productRepository;
+    private $familleRepository;
+    public function __construct(ProductRepository $productRepository,FamilleRepository $familleRepository)
     {
         $this->middleware('auth:api');
+        $this->productRepository = $productRepository;
+        $this->familleRepository = $familleRepository;
+
     }
     /**
      * Display a listing of the resource.
@@ -22,7 +30,11 @@ class ProductController extends Controller
      */
     public function index()
     {
-        return ProductResource::Collection(Product::with(['fournisseurs','unity','famille'])->get());
+        //return ProductResource::Collection(Product::with(['fournisseurs','unity','famille'])->get());
+
+        $ids = $this->familleRepository->famillesIdsByUser();
+
+        return ProductResource::Collection($this->productRepository->productsByFamilles($ids));
 
     }
 
@@ -152,4 +164,6 @@ class ProductController extends Controller
         ]);
 
     }
+
+
 }

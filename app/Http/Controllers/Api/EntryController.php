@@ -6,9 +6,12 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\EntryResource;
 use App\Models\Entry;
 use App\Models\Exercice;
+use App\Models\Movement;
+use App\Models\Stock;
 use App\Repositories\EntryRepository;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class EntryController extends Controller
@@ -30,7 +33,7 @@ class EntryController extends Controller
      */
     public function index()
     {
-       ///return EntrResource::Collection(Famille::with('service')->get());
+       //return EntrResource::Collection(Famille::with('service')->get());
         
     }
 
@@ -50,85 +53,73 @@ class EntryController extends Controller
         // store in entry
         $validator = Validator::make($request->all(), [
             'qte' => 'required',
-            'prix_unitaire' => 'required', 
+            'prix_unitaire_achat' => 'required', 
             'taux_change' => 'required', 
-            'date_peremption' => 'required', 
+           // 'date_peremption' => 'required', 
             'date_reception' => 'required', 
-            'lot_fournisseur' => 'required', 
+            //'lot_fournisseur' => 'required', 
             'bon_commande' => 'required', 
             'product' => 'required', 
             'currency' => 'required', 
-            'user' => 'required', 
             'fournisseur' => 'required', 
             'unity' => 'required', 
-            'cofe' => 'required' 
+            'cofe' => 'required' ,
+            'qteStock' => 'required',
+            'prix_unitaire_stock'=>'required'
          ]);
 
         if($validator->fails()){
             return response()->json(['error'=>$validator->errors()], 400);
        } 
+       $year = Carbon::now()->format('Y');
+       $exerciceId = Exercice::where('year', $year)->value('id');
+       $entry = new Entry();
+       $entry->qte = $request->qte;
+       $entry->prix_unitaire = $request->prix_unitaire_achat;
+       $entry->taux_change = $request->taux_change;
+       $entry->date_peremption = $request->date_peremption;
+       $entry->date_reception = $request->date_reception;
+       $entry->lot_fournisseur = $request->lot_fournisseur;
+       $entry->bon_commande = $request->bon_commande;
+       $entry->product_id = $request->product;
+       $entry->currency_id = $request->currency;
+       $entry->fournisseur_id = $request->fournisseur;
+       $entry->user_id = Auth::id();
+       $entry->unity_id = $request->unity;
+       $entry->cofe = $request->cofe;
+       $entry->exercice_id = $exerciceId;
+       $entry->save();
 
-       $entry = Entry::create($request->all());
+       //$entry = Entry::create($request->all());
      
-       return response()->json([
-           'message' => 'Entry Created!',
-           'entry' =>new EntryResource($entry)
-       ]);
-
-        // $entree = new Entree();
-        // $entree->qte = $request->input('qte');
-        // $entree->prix_unitaire = $request->input('prix_unitaire');
-        // $entree->taux_change = $request->input('taux_change');
-        // $entree->date_peremption = $request->input('date_peremption');
-        // $entree->date_reception = $request->input('date_reception');
-        // $entree->lot_fournisseur = $request->input('lot_fournisseur');
-        // $entree->bon_commande = $request->input('bon_commande');
-        // $entree->article_id = $request->input('article');
-        // $devie = $request->input('devis');
-
-
-        // $entree->fournisseur_id = $request->input('fournisseur');
-        // $entree->user_id = Auth::id();
-        // $entree->unite_id = $request->input('unite');
-        // $entree->cofe = $request->input('cofe');
-        // $entree->exercice_id = $exerciceId;
-        // $entree->save();
+      
+       
 
         // store in table Stock
 
-        // $stock = new Stock();
-        // $converter = UnitConverter::default();
-        // $conversion = null;
-        // if ($entree->article->unite->designation === "Unité" || $entree->article->unite->designation === "Boite") {
-        //     $conversion = $entree->cofe * $entree->qte;
-        // } else {
-        //     $conversion = $converter->convert($entree->qte)->from($entree->unite->designation)->to($entree->article->unite->designation);
-        // }
-        // $prixunitaire = $entree->taux_change * $entree->prix_unitaire;
-        // $cofe = $conversion / $entree->qte;
+        $stock = new Stock();
+        $stock->qte_stock = $request->qteStock;
+        $stock->prix_unitaire = $request->prix_unitaire_stock;
+        $stock->entry_id = $entry->id;
+        $stock->product_id = $request->product;
+        $stock->save();
 
-        // $entree->cofe = $cofe;
-        // $entree->save();
+        // store in table movement
 
-
-        // $stock->qte_stock = $conversion;
-        // $stock->prix_unitaire = $prixunitaire / $cofe;
-        // $stock->entree_id = $entree->id;
-        // $stock->article_id = $request->input('article');
-        // $stock->save();
-
-        // store in table Mouvement
-
-        // $mouvement = new Mouvment();
-        // $mouvement->action = "Entrée";
-        // $mouvement->action_id = $entree->id;
-        // $mouvement->article_id = $entree->article_id;
-        // $mouvement->qte = $stock->qte_stock;
-        // $mouvement->motif = '';
-        // $mouvement->make_by = Auth::id();
-        // $mouvement->exercice_id = $exerciceId;
-        // $mouvement->save();
-         
+        $movement = new Movement();
+        $movement->action = "Entry";
+        $movement->action_id = $entry->id;
+        $movement->product_id = $request->product;;
+        $movement->qte = $stock->qte_stock;
+        $movement->motif = '';
+        $movement->make_by = Auth::id();
+        $movement->exercice_id = $exerciceId;
+        $movement->save();
+       $entry =  Entry::with(['product','fournisseur','unity','currency','user'])->where('id',$entry->id)->first();
+        return response()->json([
+            'message' => 'Entry Created!',
+            'entry' =>new EntryResource($entry)
+        ]);
     }
 
     /**
@@ -160,8 +151,20 @@ class EntryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Entry $entry)
     {
-        //
+        $entry->delete();
+        return response()->json([
+            'message' => 'Entry deleted'
+        ]);
     }
+
+    public function entriesByProduct($id){
+
+       return EntryResource::Collection(Entry::with(['product','fournisseur','unity','currency','user'])->where('product_id',$id)->orderByDesc('id')->get());
+    }
+    public function entriesByFournisseur($id){
+
+        return EntryResource::Collection(Entry::with(['product','fournisseur','unity','currency','user'])->where('fournisseur_id',$id)->orderByDesc('id')->get());
+     }
 }
