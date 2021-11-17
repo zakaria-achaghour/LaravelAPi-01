@@ -9,6 +9,7 @@ use App\Models\Exercice;
 use App\Models\Movement;
 use App\Models\Stock;
 use App\Repositories\EntryRepository;
+use App\Repositories\ExerciceRepository;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -17,15 +18,17 @@ use Illuminate\Support\Facades\Validator;
 class EntryController extends Controller
 {
     private $entryRepository;
-    public function __construct(EntryRepository $entryRepository)
+    private $exerciceRepository;
+
+    public function __construct(EntryRepository $entryRepository, ExerciceRepository $exerciceRepository)
     {
         $this->middleware('auth:api');
         $this->entryRepository = $entryRepository;
+        $this->exerciceRepository = $exerciceRepository;
+
     }
 
-    public function findByProduct($id){
-        $this->entryRepository->findByProduct($id);
-    }
+   
     /**
      * Display a listing of the resource.
      *
@@ -47,8 +50,7 @@ class EntryController extends Controller
     {
 
          //  /** get the id of exercice */
-         $year = Carbon::now()->format('Y');
-         $exerciceId = Exercice::where('year', $year)->value('id');
+         $exerciceId =  $this->exerciceRepository->findId();
          
         // store in entry
         $validator = Validator::make($request->all(), [
@@ -71,8 +73,7 @@ class EntryController extends Controller
         if($validator->fails()){
             return response()->json(['error'=>$validator->errors()], 400);
        } 
-       $year = Carbon::now()->format('Y');
-       $exerciceId = Exercice::where('year', $year)->value('id');
+      
        $entry = new Entry();
        $entry->qte = $request->qte;
        $entry->prix_unitaire = $request->prix_unitaire_achat;

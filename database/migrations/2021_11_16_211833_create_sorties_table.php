@@ -22,12 +22,13 @@ class CreateSortiesTable extends Migration
             $table->foreignId('user_id');
             $table->foreignId('updated_by')->nullable();
             $table->foreignId('product_id');
-            $table->date('date_consomation');
-            $table->foreignId('destinataire');
+            $table->date('date_consommation');
+            $table->foreignId('receiver');
             $table->foreignId('destination');
             $table->string('observation')->nullable();
             $table->foreignId('exercice_id')->nullable();
-
+            $table->boolean('invoice_copy')->default(false);
+            $table->boolean('invoice_check')->default(0);
             $table->softDeletes();
             $table->timestamps();
         });

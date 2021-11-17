@@ -61,6 +61,9 @@ Route::group([
     Route::get('stocks/{stock}','StockController@show');
 
 
+    // Sorties 
+
+    Route::get('sorties','SortieController@index');
 
 
 
