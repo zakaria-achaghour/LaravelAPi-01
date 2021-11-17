@@ -3,15 +3,24 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Stock;
+use App\Repositories\FamilleRepository;
+use App\Repositories\ProductRepository;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class StockController extends Controller
 {
 
-    public function __construct()
+    private $productRepository;
+    private $familleRepository;
+    public function __construct(ProductRepository $productRepository,FamilleRepository $familleRepository)
     {
         $this->middleware('auth:api');
-        
+        $this->productRepository = $productRepository;
+        $this->familleRepository = $familleRepository;
+
     }
     /**
      * Display a listing of the resource.
@@ -21,6 +30,30 @@ class StockController extends Controller
     public function index()
     {
         
+        $ids = $this->familleRepository->famillesIdsByUser();
+        $productsIds = $this->productRepository->productsIDsByFamilles($ids);
+
+         $Stocks = Stock::Join('products', 'products.id', 'stocks.product_id')
+            ->Join('familles', 'familles.id', 'products.famille_id')
+            ->leftJoin('entries', 'entries.id', 'stocks.entry_id')
+            ->leftJoin('fournisseurs', 'fournisseurs.id', 'entries.fournisseur_id')
+            ->join('unities', 'unities.id', 'products.unity_id')
+            ->select(
+                'products.id',
+                'familles.name as famille',
+                'products.name as product',
+                'unities.name as unity',
+                'familles.inventaire',
+                'stocks.prix_unitaire as prix',
+                DB::raw('sum(stocks.qte_stock) as qte'),
+                DB::raw('sum(stocks.qte_stock * stocks.prix_unitaire) as valeur'))
+            ->whereIn('products.id', $productsIds)
+            ->groupBy('products.id', 'familles.name','stocks.prix_unitaire', 'familles.inventaire', 'products.name', 'unities.name')
+            ->get();
+
+
+
+        return $Stocks;
     }
 
     /**

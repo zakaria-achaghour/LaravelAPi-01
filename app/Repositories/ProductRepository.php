@@ -16,6 +16,12 @@ class ProductRepository
     return $products;
  }
 
+ public function productsIDsByFamilles($ids){
+
+   $productsIds = Product::select('id')->whereIn('famille_id', $ids)->with(['fournisseurs','unity','famille','entries'])->get();
+   return $productsIds;
+}
+
 
 
 
