@@ -29,7 +29,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        return UserResource::Collection(User::with('roles')->get());
+        return UserResource::Collection(User::with(['roles','familles'])->get());
     }
 
     /**
@@ -45,7 +45,9 @@ class UserController extends Controller
             'lastname' => 'required|string|between:2,100',
             'gender' => 'string|between:2,50',
             'email' => 'required|string|email|max:100',
-            'roles'=> 'required'
+            'roles'=> 'required',
+            'familles'=> 'required',
+
         ]);
         if($validator->fails()){
             return response()->json($validator->errors(), 400);
@@ -67,7 +69,9 @@ class UserController extends Controller
                 $user->save();
                 
                 $user->roles()->sync($request->roles);
-                $user = User::where('id', $user->id)->with('roles')->first();
+                $user->familles()->sync($request->familles);
+
+                $user = User::where('id', $user->id)->with(['roles','familles'])->first();
 
        return response()->json([
            'message' => 'User successfully Created',
@@ -85,7 +89,7 @@ class UserController extends Controller
     public function show($id)
     {
         // return new UserResource(User::findOrFail($id));
-        $user = User::with('roles')->where('id',$id)->first();
+        $user = User::with(['roles','familles'])->where('id',$id)->first();
         return new UserResource($user);
     }
 
@@ -103,7 +107,9 @@ class UserController extends Controller
             'lastname' => 'required|string|between:2,100',
             'gender' => 'string|between:2,50',
             'email' => 'required|string|email|max:100',
-            'roles'=> 'required'
+            'roles'=> 'required',
+            'familles'=> 'required',
+
         ]);
       
         $user->firstname = $request->firstname;
@@ -114,7 +120,9 @@ class UserController extends Controller
         $user->save();
         //$rolesIds = Role::select('id')->whereIn('name',$request->roles)->get();
         $user->roles()->sync($request->roles);
-        $user = User::where('id', $user->id)->with('roles')->first();
+        $user->familles()->sync($request->familles);
+
+                $user = User::where('id', $user->id)->with(['roles','familles'])->first();
 
         return response()->json([
             'message' => 'User successfully Updated',

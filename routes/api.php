@@ -42,12 +42,23 @@ Route::group([
     Route::apiResource('fournisseurs','FournisseurController');
     Route::apiResource('familles','FamilleController');
     Route::apiResource('services','ServiceController');
-    Route::apiResource('products','ProductController');
     Route::apiResource('unities','UnityController');
     Route::apiResource('currencies','CurrencyController');
 
     // entry routes
     Route::apiResource('entries','EntryController');
+
+
+    // products
+    Route::apiResource('products','ProductController');
+    Route::get('/products/{id}/entries','EntryController@entriesByProduct');
+
+    // fournisseurs
+    Route::get('/fournisseurs/{id}/entries','EntryController@entriesByFournisseur');
+
+    // Stocks 
+    Route::get('stocks','StockController@index');
+    Route::get('stocks/{stock}','StockController@show');
 
 
 
