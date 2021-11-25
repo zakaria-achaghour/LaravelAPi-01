@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Stock;
 use App\Repositories\FamilleRepository;
 use App\Repositories\ProductRepository;
+use App\Repositories\StockRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -15,11 +16,14 @@ class StockController extends Controller
 
     private $productRepository;
     private $familleRepository;
-    public function __construct(ProductRepository $productRepository,FamilleRepository $familleRepository)
+    private $stockRepository;
+    public function __construct(ProductRepository $productRepository,FamilleRepository $familleRepository,StockRepository $stockRepository)
     {
         $this->middleware('auth:api');
         $this->productRepository = $productRepository;
         $this->familleRepository = $familleRepository;
+        $this->stockRepository = $stockRepository;
+
 
     }
     /**
@@ -99,5 +103,13 @@ class StockController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function stocksByProductExperationDate($id) {
+        $this->stockRepository->findByProductExperationDate($id);
+    }
+
+    public function stocksByProductReceptionDate($id) {
+        $this->stockRepository->findByProductReceptionDate($id);
     }
 }

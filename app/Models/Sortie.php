@@ -11,7 +11,7 @@ class Sortie extends Model
     use HasFactory, SoftDeletes;
     public function unity()
     {
-        return $this->belongsTo(Unite::class);
+        return $this->belongsTo(Unity::class);
     }
 
     public function product()
@@ -31,14 +31,14 @@ class Sortie extends Model
     {
         return $this->belongsTo(Famille::class);
     }
-    // public function distinataire()
-    // {
-    //     return $this->belongsTo(distinataire::class);
-    // }
-    // public function distination()
-    // {
-    //     return $this->belongsTo(distination::class);
-    // }
+    public function receiver()
+    {
+        return $this->belongsTo(Receiver::class);
+    }
+    public function destination()
+    {
+        return $this->belongsTo(Destination::class);
+    }
 
     public function exercice()
     {

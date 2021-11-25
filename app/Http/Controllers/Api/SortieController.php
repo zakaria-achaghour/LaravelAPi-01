@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\SortieResource;
 use App\Models\Exercice;
 use App\Models\Movement;
+use App\Models\Sortie;
 use App\Repositories\ExerciceRepository;
 use App\Repositories\FamilleRepository;
 use Carbon\Carbon;
@@ -28,6 +30,8 @@ class SortieController extends Controller
      */
     public function index()
     {
+        // stock + empthy or not 
+
                 $exerciceId =  $this->exerciceRepository->findId();
 
 
@@ -35,35 +39,17 @@ class SortieController extends Controller
                 $famillesIds = $this->familleRepository->famillesIdsByUser();
 
               return  $products  = Movement::join('products','products.id','movements.product_id')
-                                       //->Join('unities', 'unities.id','products.unity_id')
-                                       ->select('products.name as product','products.id','products.famille_id',
-                                       'products.sage','unity_id',DB::raw('sum(m.qte) as qte'),)
-                                       ->with('products.famille','products.unity')
+                                       ->Join('unities', 'unities.id','products.unity_id')
+                                       ->Join('familles', 'familles.id','products.famille_id')
+
+                                       ->select('products.name as product','products.id','familles.name as famille',
+                                       'products.sage','unities.name as unity',DB::raw('sum(movements.qte) as qte'),)
+                                       
                                        ->whereIn('products.famille_id', $famillesIds)
                                        ->where('movements.qte', '<>',0)
-                                       ->groupBy('products.name as product','products.id','products.famille_id', 'products.sage','unity_id')
+                                       ->groupBy('products.name','products.id','familles.name', 'products.sage','unities.name')
                                        ->get();
- 
-                // $articles = DB::table('mouvments as m')
-                //     ->Join('articles as a', 'a.id', '=', 'm.article_id')
-                //     ->Join('familles as f', 'f.id', '=', 'a.famille_id ')
-                //     ->Join('unites as u', 'u.id', '=', 'a.unite_id')
-                //     ->select(
-                //         'a.designation as article',
-                //         'a.id as art_id',
-                //         DB::raw('sum(m.qte) as qte'),
-                //         'f.designation as famille',
-                //         'a.code_sage as sage',
-                //         'u.designation as unite',
-                //         'f.inventaire',
-                //         'f.active_exercice',
-                //     )
-                //     ->whereNull('a.deleted_at')
-                //     ->where('m.qte', '<>',0)
-                //     ->groupBy('a.designation','f.designation', 'a.id','f.active_exercice','f.inventaire', 'a.code_sage', 'u.designation','a.famille_id')
-                //     ->havingraw('a.famille_id in'.$con)
-                //     ->orderBy('qte', 'DESC')
-                //     ->get();
+
 }
 
     /**
@@ -85,7 +71,10 @@ class SortieController extends Controller
      */
     public function show($id)
     {
-        //
+        // detail for product  sorties
+        $sorties = Sortie::where('product_id',$id)->with(['product','product.famille','unity','receiver','destination'])->orderByDesc('id')->get();
+       
+        return  SortieResource::Collection($sorties);
     }
 
     /**
@@ -106,8 +95,11 @@ class SortieController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Sortie $sortie)
     {
-        //
+        // $sortie->delete();
+        // return response()->json([
+        //     'message' => 'Sortie deleted'
+        // ]);
     }
 }
