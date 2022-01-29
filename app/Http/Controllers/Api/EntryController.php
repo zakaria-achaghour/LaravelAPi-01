@@ -13,6 +13,7 @@ use App\Repositories\ExerciceRepository;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class EntryController extends Controller
@@ -154,10 +155,42 @@ class EntryController extends Controller
      */
     public function destroy(Entry $entry)
     {
-        $entry->delete();
+        $exerciceId =  $this->exerciceRepository->findId();
+        $stock = Stock::where('entry_id', $entry->id)->first();
+        // $sortie = DB::table('sortie_detail')->where('entry_id', $entry->id)->count();
+
+        // if ($sortie > 0) {
+        //     return response()->json([
+        //         'error' => true,
+        //         'message' => "Entrée déjà  Consommé",
+        //     ]);
+        // }
+
+       $stock->delete();
+       $entry->delete();
+
+            $action = 'Entry';
+
+        if ($entry->bon_commande === 'Diverse') {
+            $action = 'Entry Diverse';
+        }
+        $movement = new Movement();
+        $movement->action = $action;
+        $movement->action_id = $entry->id;
+        $movement->product_id = $entry->product_id;;
+        $movement->qte = -$stock->qte_stock;
+        $movement->motif = 'Retour';
+        $movement->make_by = Auth::id();
+        $movement->exercice_id = $exerciceId;
+        $movement->save();
+
+      
+
         return response()->json([
-            'message' => 'Entry deleted'
+          
+            'message' => "Entry deleted ",
         ]);
+       
     }
 
     public function entriesByProduct($id){

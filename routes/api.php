@@ -44,6 +44,9 @@ Route::group([
     Route::apiResource('services','ServiceController');
     Route::apiResource('unities','UnityController');
     Route::apiResource('currencies','CurrencyController');
+    Route::apiResource('destinations','DestinationController');
+    Route::apiResource('receivers','ReceiverController');
+
 
     // entry routes
     Route::apiResource('entries','EntryController');
@@ -57,13 +60,19 @@ Route::group([
     Route::get('/fournisseurs/{id}/entries','EntryController@entriesByFournisseur');
 
     // Stocks 
-    Route::get('stocks','StockController@index');
+    Route::apiResource('stocks','StockController')->only(['show','index']);
+    // Route::get('stocks/{product}/receptionDate','StockController@stocksByProductReceptionDate');
+    // Route::get('stocks/{product}/experationDate','StockController@stocksByProductExperationDate');
+
+
     Route::get('stocks/{stock}','StockController@show');
 
 
     // Sorties 
 
-    Route::get('sorties','SortieController@index');
+    Route::apiResource('sorties','SortieController');
+    Route::get('sorties/{entry_id}/sortie','SortieController@sortieEntryCount');
+
 
 
 
