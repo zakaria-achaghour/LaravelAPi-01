@@ -60,9 +60,9 @@ Route::group([
     Route::get('/fournisseurs/{id}/entries','EntryController@entriesByFournisseur');
 
     // Stocks 
-    Route::get('stocks','StockController@index');
-    Route::get('stocks/{product}/receptionDate','StockController@stocksByProductReceptionDate');
-    Route::get('stocks/{product}/ExperationDate','StockController@stocksByProductExperationDate');
+    Route::apiResource('stocks','StockController')->only(['show','index']);
+    // Route::get('stocks/{product}/receptionDate','StockController@stocksByProductReceptionDate');
+    // Route::get('stocks/{product}/experationDate','StockController@stocksByProductExperationDate');
 
 
     Route::get('stocks/{stock}','StockController@show');
@@ -71,6 +71,8 @@ Route::group([
     // Sorties 
 
     Route::apiResource('sorties','SortieController');
+    Route::get('sorties/{entry_id}/sortie','SortieController@sortieEntryCount');
+
 
 
 
