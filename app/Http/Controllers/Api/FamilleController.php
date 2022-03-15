@@ -37,8 +37,6 @@ class FamilleController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required|string', 
             'service_id' => 'required', 
-            'lot_fournisseur' => 'required', 
-            'date_peremption' => 'required',
             'statut' => 'required', 
 
 
@@ -51,10 +49,12 @@ class FamilleController extends Controller
        // $famille = Famille::create($request->all());
     //$service_id = Service::select('id')->where('name',$request->service)->value();
 
+
      $famille = new Famille();
      $famille->name = $request->name;
 
      $famille->service_id =  $request->service_id;
+     
      $famille->lot_fournisseur = $request->lot_fournisseur;
      $famille->date_peremption = $request->date_peremption;
 

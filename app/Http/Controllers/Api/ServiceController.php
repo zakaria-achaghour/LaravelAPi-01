@@ -36,8 +36,7 @@ class ServiceController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required|string',
-            'statut' => 'required', 
-            'father' => 'required'
+            'statut' => 'required'
 
         ]);
 
